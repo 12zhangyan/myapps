@@ -1,9 +1,8 @@
-import { PlusOutlined } from '@ant-design/icons';
-import type { ActionType, ProColumns } from '@ant-design/pro-components';
-import { ProTable, TableDropdown } from '@ant-design/pro-components';
-import { Button } from 'antd';
-import { useRef } from 'react';
+import type {ActionType, ProColumns} from '@ant-design/pro-components';
+import {ProTable, TableDropdown} from '@ant-design/pro-components';
+import {useRef} from 'react';
 import {searchUsers} from "@/services/ant-design-pro/api";
+import {Image} from "antd";
 
 const columns: ProColumns<API.CurrentUser>[] = [
   {
@@ -28,7 +27,11 @@ const columns: ProColumns<API.CurrentUser>[] = [
   {
     title: '头像',
     dataIndex: 'avatarUrl',
-    copyable: true,
+    render: (_, record) => (
+      <div>
+        <Image src={record.avatarUrl} width={50} className="avatarUrl"/>
+      </div>
+    ),
   },
   {
     title: '性别',
@@ -49,8 +52,20 @@ const columns: ProColumns<API.CurrentUser>[] = [
     dataIndex: 'userStatus',
   },
   {
+    title: '邀请码',
+    dataIndex: 'planetCode',
+  },
+  {
     title: '角色',
     dataIndex: 'role',
+    valueType: 'select',
+    valueEnum: {
+      0: {text: '普通用户', status: 'Default'},
+      1: {
+        text: '管理员',
+        status: 'Success',
+      },
+    },
   },
   {
     title: '创建时间',
@@ -59,49 +74,6 @@ const columns: ProColumns<API.CurrentUser>[] = [
     valueType: 'dateTime',
   },
 
-  // {
-  //   disable: true,
-  //   title: '状态',
-  //   dataIndex: 'state',
-  //   filters: true,
-  //   onFilter: true,
-  //   ellipsis: true,
-  //   valueType: 'select',
-  //   valueEnum: {
-  //     all: { text: '超长'.repeat(50) },
-  //     open: {
-  //       text: '未解决',
-  //       status: 'Error',
-  //     },
-  //     closed: {
-  //       text: '已解决',
-  //       status: 'Success',
-  //       disabled: true,
-  //     },
-  //     processing: {
-  //       text: '解决中',
-  //       status: 'Processing',
-  //     },
-  //   },
-  // },
-  // {
-  //   disable: true,
-  //   title: '标签',
-  //   dataIndex: 'labels',
-  //   search: false,
-  //   renderFormItem: (_, { defaultRender }) => {
-  //     return defaultRender(_);
-  //   },
-  //   render: (_, record) => (
-  //     <Space>
-  //       {record.labels.map(({ name, color }) => (
-  //         <Tag color={color} key={name}>
-  //           {name}
-  //         </Tag>
-  //       ))}
-  //     </Space>
-  //   ),
-  // },
   {
     title: '操作',
     valueType: 'option',
@@ -122,8 +94,8 @@ const columns: ProColumns<API.CurrentUser>[] = [
         key="actionGroup"
         onSelect={() => action?.reload()}
         menus={[
-          { key: 'copy', name: '复制' },
-          { key: 'delete', name: '删除' },
+          {key: 'copy', name: '复制'},
+          {key: 'delete', name: '删除'},
         ]}
       />,
     ],
@@ -140,7 +112,6 @@ export default () => {
       request={async (params = {}, sort, filter) => {
         console.log(sort, filter);
         const userList = await searchUsers();
-        //await waitTime(2000);
         return {
           data: userList
         }
@@ -183,24 +154,24 @@ export default () => {
       dateFormatter="string"
       headerTitle="高级表格"
     />
-      // pagination={{
-      //   pageSize: 5,
-      //   onChange: (page) => console.log(page),
-      // }}
-      // dateFormatter="string"
-      // headerTitle="高级表格"
-      // toolBarRender={() => [
-      //   <Button
-      //     key="button"
-      //     icon={<PlusOutlined />}
-      //     onClick={() => {
-      //       actionRef.current?.reload();
-      //     }}
-      //     type="primary"
-      //   >
-      //     新建
-      //   </Button>,
+    // pagination={{
+    //   pageSize: 5,
+    //   onChange: (page) => console.log(page),
+    // }}
+    // dateFormatter="string"
+    // headerTitle="高级表格"
+    // toolBarRender={() => [
+    //   <Button
+    //     key="button"
+    //     icon={<PlusOutlined />}
+    //     onClick={() => {
+    //       actionRef.current?.reload();
+    //     }}
+    //     type="primary"
+    //   >
+    //     新建
+    //   </Button>,
 
-      // ]}
+    // ]}
   );
 };

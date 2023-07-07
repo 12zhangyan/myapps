@@ -23,7 +23,7 @@ const Register: React.FC = () => {
   const [userLoginState] = useState<API.LoginResult>({});
   const [type, setType] = useState<string>('account');
   const handleSubmit = async (values: API.RegisterParams) => {
-    const {userAccount,userPassword,checkPassword} = values;
+    const {userAccount,userPassword,checkPassword,planetCode} = values;
     //校验
     if (userPassword !== checkPassword){
       message.error('两次输入密码不一致')
@@ -31,8 +31,8 @@ const Register: React.FC = () => {
     }
     try {
       // 登录
-      const id = await register(values)
-      if (id > 0) {
+      const res = await register(values);
+      if (res.code === 0 && res.data > 0) {
         const defaultLoginSuccessMessage = '注册成功！';
         message.success(defaultLoginSuccessMessage);
         /** 此方法会跳转到 redirect 参数所在的位置 */
@@ -44,11 +44,11 @@ const Register: React.FC = () => {
         });
         return;
       } else {
-        throw new Error('register error id = ${id}');
+        throw new Error(res.description);
       }
-    } catch (error) {
-      const defaultLoginFailureMessage = '登录失败，请重试！';
-      message.error(defaultLoginFailureMessage);
+    } catch (error: any) {
+      const defaultLoginFailureMessage = '注册失败，请重试！';
+      message.error(error.message ?? defaultLoginFailureMessage);
     }
   };
   const { status, type: loginType } = userLoginState;
@@ -131,6 +131,20 @@ const Register: React.FC = () => {
                     type: 'string',
                     message: '确认密码不能小于8位！'
                   }
+                ]}
+              />
+              <ProFormText
+                name="planetCode"
+                fieldProps={{
+                  size: 'large',
+                  prefix: <UserOutlined className={styles.prefixIcon} />,
+                }}
+                placeholder={'请输入邀请码'}
+                rules={[
+                  {
+                    required: true,
+                    message: '邀请码是必填项！',
+                  },
                 ]}
               />
             </>
